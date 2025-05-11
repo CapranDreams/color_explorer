@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Color Ranker - Analytics</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <script src="https://cdn.plot.ly/plotly-2.27.1.min.js"></script>
+</head>
+<body class="analytics-page">
+    <div class="header">
+        <button class="home-button" onclick="goHome()">Home</button>
+        <a href="#" onclick="goToColorRank()" class="back-button">Back to Rating</a>
+    </div>
+    <div class="plots-container">
+        <div class="plots-row">
+            <div id="heatmap"></div>
+            <div id="scatter3d"></div>
+        </div>
+        <div class="color-range-section">
+            <select id="colorRangeSelect" onchange="updateColorRangePlot()">
+                <option value="green">Green Colors</option>
+                <option value="blue">Blue Colors</option>
+                <option value="purple">Purple Colors</option>
+                <option value="yellow">Yellow Colors</option>
+                <option value="red">Red Colors</option>
+                <option value="orange">Orange Colors</option>
+                <option value="pink">Pink Colors</option>
+                <option value="cyan">Cyan Colors</option>
+            </select>
+            <div id="colorRangePlot"></div>
+        </div>
+    </div>
+    <div id="heatmapError" class="error-message" style="display: none;"></div>
+    <script src="/static/scripts.js"></script>
+</body>
+</html> 

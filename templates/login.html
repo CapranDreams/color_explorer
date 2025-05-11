@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Color Ranker - Login</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+</head>
+<body>
+    <div id="colorGrid" class="color-grid"></div>
+    <div class="login-container">
+        <div class="login-card">
+            <h1>Color Ranker</h1>
+            <div class="login-form">
+                <input type="text" id="username" placeholder="Enter your username">
+                <button onclick="login()">Login / Register</button>
+            </div>
+        </div>
+    </div>
+    <script src="/static/scripts.js"></script>
+    <script>
+        const gridContainer = document.getElementById('colorGrid');
+        const GRID_SIZE = 40;
+        const UPDATE_INTERVAL = 100;
+        const COLOR_CHANGE_RATE = 0.1;
+        const MIN_DISRUPTION_INTERVAL = 2000; // 2 seconds
+        const MAX_DISRUPTION_INTERVAL = 5000; // 5 seconds
+        const PATTERN_TYPES = ['glider', 'blinker', 'block', 'random'];
+        let colorGrid = [];
+        let stateGrid = [];
+        let cells = [];
+
+        function initGrid() {
+            const cellSize = Math.ceil(Math.max(window.innerWidth, window.innerHeight) / GRID_SIZE);
+            const cols = Math.ceil(window.innerWidth / cellSize);
+            const rows = Math.ceil(window.innerHeight / cellSize);
+            
+            gridContainer.style.setProperty('--cell-size', cellSize + 'px');
+            gridContainer.style.setProperty('--grid-cols', cols);
+            gridContainer.style.setProperty('--grid-rows', rows);
+
+            // Initialize the grids
+            colorGrid = [];
+            stateGrid = [];
+            for (let i = 0; i < rows; i++) {
+                colorGrid[i] = [];
+                stateGrid[i] = [];
+                for (let j = 0; j < cols; j++) {
+                    colorGrid[i][j] = getRandomColor();
+                    stateGrid[i][j] = Math.random() < 0.3; // 30% chance of being alive
+                }
+            }
+
+            // Create the visual cells
+            gridContainer.innerHTML = '';
+            cells = [];
+            for (let i = 0; i < rows; i++) {
+                cells[i] = [];
+                for (let j = 0; j < cols; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    gridContainer.appendChild(cell);
+                    cells[i][j] = cell;
+                }
+            }
+        }
+
+        function getRandomColor() {
+            return {
+                r: Math.random() * 255,
+                g: Math.random() * 255,
+                b: Math.random() * 255
+            };
+        }
+
+        function colorToString(color) {
+            return `rgb(${Math.round(color.r)}, ${Math.round(color.g)}, ${Math.round(color.b)})`;
+        }
+
+        function blendColors(colors) {
+            if (colors.length === 0) return getRandomColor();
+            
+            const avg = {
+                r: 0,
+                g: 0,
+                b: 0
+            };
+            
+            colors.forEach(color => {
+                avg.r += color.r;
+                avg.g += color.g;
+                avg.b += color.b;
+            });
+            
+            avg.r /= colors.length;
+            avg.g /= colors.length;
+            avg.b /= colors.length;
+            
+            // Add slight random variation
+            avg.r += (Math.random() - 0.5) * 20;
+            avg.g += (Math.random() - 0.5) * 20;
+            avg.b += (Math.random() - 0.5) * 20;
+
+            // Ensure values stay within bounds
+            avg.r = (avg.r + 256) % 256;
+            avg.g = (avg.g + 256) % 256;
+            avg.b = (avg.b + 256) % 256;
+
+            return avg;
+        }
+
+        function getNeighbors(grid, row, col) {
+            const rows = grid.length;
+            const cols = grid[0].length;
+            const neighbors = [];
+            
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    if (i === 0 && j === 0) continue;
+                    
+                    const newRow = (row + i + rows) % rows;
+                    const newCol = (col + j + cols) % cols;
+                    neighbors.push({
+                        value: grid[newRow][newCol],
+                        row: newRow,
+                        col: newCol
+                    });
+                }
+            }
+            
+            return neighbors;
+        }
+
+        function updateGrid() {
+            const rows = cells.length;
+            const cols = cells[0].length;
+            const newStateGrid = [];
+            const newColorGrid = [];
+
+            for (let i = 0; i < rows; i++) {
+                newStateGrid[i] = [];
+                newColorGrid[i] = [];
+                for (let j = 0; j < cols; j++) {
+                    // Get neighbors
+                    const neighbors = getNeighbors(stateGrid, i, j);
+                    const liveNeighbors = neighbors.filter(n => n.value).length;
+
+                    // Update state based on Game of Life rules
+                    if (stateGrid[i][j]) {
+                        newStateGrid[i][j] = liveNeighbors === 2 || liveNeighbors === 3;
+                    } else {
+                        newStateGrid[i][j] = liveNeighbors === 3;
+                    }
+
+                    // Update color based on living neighbors
+                    const livingNeighborColors = neighbors
+                        .filter(n => stateGrid[n.row][n.col])
+                        .map(n => colorGrid[n.row][n.col]);
+
+                    if (newStateGrid[i][j]) {
+                        newColorGrid[i][j] = blendColors(livingNeighborColors);
+                    } else {
+                        // Fade to black if dead
+                        const currentColor = colorGrid[i][j];
+                        newColorGrid[i][j] = {
+                            r: currentColor.r * 0.9,
+                            g: currentColor.g * 0.9,
+                            b: currentColor.b * 0.9
+                        };
+                    }
+
+                    // Update visual cell
+                    cells[i][j].style.backgroundColor = colorToString(newColorGrid[i][j]);
+                    cells[i][j].style.opacity = newStateGrid[i][j] ? 1 : 0.3;
+                }
+            }
+
+            // Update grids
+            stateGrid = newStateGrid;
+            colorGrid = newColorGrid;
+
+            // Randomly revive cells to prevent stagnation
+            if (Math.random() < 0.1) {
+                const row = Math.floor(Math.random() * rows);
+                const col = Math.floor(Math.random() * cols);
+                stateGrid[row][col] = true;
+                colorGrid[row][col] = getRandomColor();
+            }
+        }
+
+        function addDisruption() {
+            const rows = cells.length;
+            const cols = cells[0].length;
+            const pattern = PATTERN_TYPES[Math.floor(Math.random() * PATTERN_TYPES.length)];
+            const startRow = Math.floor(Math.random() * (rows - 5));
+            const startCol = Math.floor(Math.random() * (cols - 5));
+            const brightColor = {
+                r: 200 + Math.random() * 55,
+                g: 200 + Math.random() * 55,
+                b: 200 + Math.random() * 55
+            };
+
+            switch (pattern) {
+                case 'glider':
+                    // Add glider pattern
+                    const glider = [[0, 1, 0], [0, 0, 1], [1, 1, 1]];
+                    glider.forEach((rowPattern, i) => {
+                        rowPattern.forEach((cell, j) => {
+                            if (cell) {
+                                stateGrid[startRow + i][startCol + j] = true;
+                                colorGrid[startRow + i][startCol + j] = brightColor;
+                            }
+                        });
+                    });
+                    break;
+
+                case 'blinker':
+                    // Add vertical blinker
+                    for (let i = 0; i < 3; i++) {
+                        stateGrid[startRow + i][startCol] = true;
+                        colorGrid[startRow + i][startCol] = brightColor;
+                    }
+                    break;
+
+                case 'block':
+                    // Add 2x2 block
+                    for (let i = 0; i < 2; i++) {
+                        for (let j = 0; j < 2; j++) {
+                            stateGrid[startRow + i][startCol + j] = true;
+                            colorGrid[startRow + i][startCol + j] = brightColor;
+                        }
+                    }
+                    break;
+
+                case 'random':
+                    // Add random 3x3 pattern
+                    for (let i = 0; i < 3; i++) {
+                        for (let j = 0; j < 3; j++) {
+                            if (Math.random() < 0.6) {
+                                stateGrid[startRow + i][startCol + j] = true;
+                                colorGrid[startRow + i][startCol + j] = brightColor;
+                            }
+                        }
+                    }
+                    break;
+            }
+
+            // Schedule next disruption
+            scheduleNextDisruption();
+        }
+
+        function scheduleNextDisruption() {
+            const nextInterval = MIN_DISRUPTION_INTERVAL + 
+                Math.random() * (MAX_DISRUPTION_INTERVAL - MIN_DISRUPTION_INTERVAL);
+            setTimeout(addDisruption, nextInterval);
+        }
+
+        // Initialize and start animation
+        initGrid();
+        setInterval(updateGrid, UPDATE_INTERVAL);
+        scheduleNextDisruption(); // Start the disruption cycle
+
+        // Handle window resize
+        window.addEventListener('resize', initGrid);
+    </script>
+</body>
+</html> 

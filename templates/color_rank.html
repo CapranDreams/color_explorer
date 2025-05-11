@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Color Ranker - Rate Colors</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+</head>
+<body>
+    <div class="header">
+        <button class="home-button" onclick="goHome()">Home</button>
+        <div class="user-info">Logged in as: <span id="userDisplay"></span></div>
+        <div class="counter">Colors Ranked: <span id="rankCount">0</span></div>
+        <a href="#" onclick="goToAnalytics()" class="analytics-button">View Analytics</a>
+    </div>
+    <div id="colorDisplay" class="color-display">
+        <div class="numpad">
+            <div class="numpad-row">
+                <button onclick="rateColor(7)" class="rating-btn" style="--rating-color: rgb(100, 255, 100)">7</button>
+                <button onclick="rateColor(8)" class="rating-btn" style="--rating-color: rgb(50, 255, 50)">8</button>
+                <button onclick="rateColor(9)" class="rating-btn" style="--rating-color: rgb(0, 255, 0)">9</button>
+            </div>
+            <div class="numpad-row">
+                <button onclick="rateColor(4)" class="rating-btn" style="--rating-color: rgb(255, 255, 100)">4</button>
+                <button onclick="rateColor(5)" class="rating-btn" style="--rating-color: rgb(200, 255, 100)">5</button>
+                <button onclick="rateColor(6)" class="rating-btn" style="--rating-color: rgb(150, 255, 100)">6</button>
+            </div>
+            <div class="numpad-row">
+                <button onclick="rateColor(1)" class="rating-btn" style="--rating-color: rgb(255, 0, 0)">1</button>
+                <button onclick="rateColor(2)" class="rating-btn" style="--rating-color: rgb(255, 50, 50)">2</button>
+                <button onclick="rateColor(3)" class="rating-btn" style="--rating-color: rgb(255, 100, 100)">3</button>
+            </div>
+        </div>
+    </div>
+    <script src="/static/scripts.js"></script>
+</body>
+</html> 
