@@ -2,8 +2,8 @@
 <html>
 <head>
     <title>Color Ranker - Analytics</title>
-    <link rel="stylesheet" href="/static/styles.css">
-    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link rel="stylesheet" href="/colorgame/static/styles.css">
+    <link rel="icon" type="image/png" href="/colorgame/static/logo.png">
     <script src="https://cdn.plot.ly/plotly-2.27.1.min.js"></script>
 </head>
 <body class="analytics-page">
@@ -16,21 +16,30 @@
             <div id="heatmap"></div>
             <div id="scatter3d"></div>
         </div>
+        <div class="hsv-plots-row">
+            <div id="huePlot"></div>
+            <div id="saturationPlot"></div>
+            <div id="valuePlot"></div>
+        </div>
         <div class="color-range-section">
             <select id="colorRangeSelect" onchange="updateColorRangePlot()">
-                <option value="green">Green Colors</option>
-                <option value="blue">Blue Colors</option>
-                <option value="purple">Purple Colors</option>
-                <option value="yellow">Yellow Colors</option>
+                <option value="random">Random Colors</option>
+                <option value="dark">Dark Colors</option>
+                <option value="light">Light Colors</option>
+                <option value="earth">Earth Tones</option>
                 <option value="red">Red Colors</option>
                 <option value="orange">Orange Colors</option>
-                <option value="pink">Pink Colors</option>
+                <option value="yellow">Yellow Colors</option>
+                <option value="green">Green Colors</option>
                 <option value="cyan">Cyan Colors</option>
+                <option value="blue">Blue Colors</option>
+                <option value="purple">Purple Colors</option>
+                <option value="pink">Pink Colors</option>
             </select>
             <div id="colorRangePlot"></div>
         </div>
     </div>
     <div id="heatmapError" class="error-message" style="display: none;"></div>
-    <script src="/static/scripts.js"></script>
+    <script src="/colorgame/static/scripts.js"></script>
 </body>
 </html> 

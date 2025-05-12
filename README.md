@@ -18,7 +18,7 @@ pip install -r requirements.txt
 
 ```bash
 # run the app
-uvicorn app.main:app --port 16480 --reload
+uvicorn colorgame.app.main:app --port 16480 --reload
 ```
 
 ## Screenshots

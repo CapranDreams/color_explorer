@@ -2,17 +2,33 @@
 <html>
 <head>
     <title>Color Ranker - Rate Colors</title>
-    <link rel="stylesheet" href="/static/styles.css">
-    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link rel="stylesheet" href="/colorgame/static/styles.css">
+    <link rel="icon" type="image/png" href="/colorgame/static/logo.png">
 </head>
 <body>
     <div class="header">
         <button class="home-button" onclick="goHome()">Home</button>
         <div class="user-info">Logged in as: <span id="userDisplay"></span></div>
         <div class="counter">Colors Ranked: <span id="rankCount">0</span></div>
+        <select id="colorModeSelect" onchange="getNewColor()" class="color-mode-select">
+            <option value="random">Random Colors</option>
+            <option value="dark">Dark Colors</option>
+            <option value="light">Light Colors</option>
+            <option value="earth">Earth Tones</option>
+            <option value="red">Red Colors</option>
+            <option value="orange">Orange Colors</option>
+            <option value="yellow">Yellow Colors</option>
+            <option value="green">Green Colors</option>
+            <option value="cyan">Cyan Colors</option>
+            <option value="blue">Blue Colors</option>
+            <option value="purple">Purple Colors</option>
+            <option value="pink">Pink Colors</option>
+            <option value="brown">Brown Colors</option>
+        </select>
         <a href="#" onclick="goToAnalytics()" class="analytics-button">View Analytics</a>
     </div>
     <div id="colorDisplay" class="color-display">
+        <div class="instructions">Rank the background color from 1:dislike to 9:like</div>
         <div class="numpad">
             <div class="numpad-row">
                 <button onclick="rateColor(7)" class="rating-btn" style="--rating-color: rgb(100, 255, 100)">7</button>
@@ -31,6 +47,6 @@
             </div>
         </div>
     </div>
-    <script src="/static/scripts.js"></script>
+    <script src="/colorgame/static/scripts.js"></script>
 </body>
 </html> 
